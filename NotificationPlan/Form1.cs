@@ -22,20 +22,18 @@ namespace NotificationPlan
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Microsoft.Office.Interop.Outlook.Application Application = null;
-            Application = new Microsoft.Office.Interop.Outlook.Application();
-            MAPIFolder primaryCalendar = (MAPIFolder)Application.ActiveExplorer().Session
-                .GetDefaultFolder(OlDefaultFolders.olFolderCalendar);
-           //var personalCalendar = primaryCalendar.Folders.Add("newCalendarName", OlDefaultFolders.olFolderCalendar);
-            AppointmentItem newEvent = primaryCalendar.Items.Add(OlItemType.olAppointmentItem) as AppointmentItem;
-            newEvent.Start = DateTime.Now.AddHours(1).AddDays(1);
-            newEvent.End = DateTime.Now.AddHours(1.25).AddDays(1);
-            newEvent.Subject = "New Plan";
-            newEvent.Body = "Mesf sdf dskpfldskfnlsd ";
-            newEvent.ReminderMinutesBeforeStart = 1140;
-            newEvent.ReminderPlaySound = true;
-            newEvent.Save();
-            Application.ActiveExplorer().CurrentFolder.Display();
+            WorkPlanList ww = new WorkPlanList();
+            var workPlans = ww.GetPlan(10);
+            var itemCalendars = new List<ItemCalendar>();
+            label1.Text = workPlans.Where(empl => (empl.NameEmploy.Contains(Const.NameEmploy))).Count().ToString();
+            itemCalendars = Other.Convert(workPlans.Where(t => t.NameEmploy.Contains(Const.NameEmploy)).ToList());
+            foreach (var item in itemCalendars)
+            {
+                listBox1.Items.Add(item.StartDateTime + item.Body);
+            }
+
+            Other.AddItemCalendar(itemCalendars);
+
         }
     }
 }

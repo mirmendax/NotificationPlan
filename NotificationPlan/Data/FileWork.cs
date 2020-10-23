@@ -25,10 +25,10 @@ namespace NotificationPlan.Data
             }
             if (string.IsNullOrEmpty(fileMonth))
             {
-                
+                //
             }
 
-            return string.Empty;
+            return fileMonth;
         }
     }
 }

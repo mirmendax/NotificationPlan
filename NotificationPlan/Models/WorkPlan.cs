@@ -8,17 +8,20 @@ namespace NotificationPlan.Models
 {
     public class WorkPlan
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public string ViewTO { get; set; }
         public DateTime StartTO { get; set; }
-        public DateTime StopTO { get; set; }
+        public DateTime EndTO { get; set; }
         public string NameEmploy { get; set; }
 
-        public bool IsDone { get; set; }
 
-        public bool IsNotification { get; set; }
-
-        public DateTime NotifyDate { get; set; }
+        public override string ToString()
+        {
+            return $"{nameof(Title)}: {Title}, " +
+                   $"{nameof(ViewTO)}: {ViewTO}, " +
+                   $"{nameof(StartTO)}: {StartTO}, " +
+                   $"{nameof(EndTO)}: {EndTO}, " +
+                   $"{nameof(NameEmploy)}: {NameEmploy}, ";
+        }
     }
 }
