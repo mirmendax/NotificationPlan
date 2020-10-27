@@ -8,7 +8,7 @@ namespace NotificationPlan.Data
 {
     public class SettingsContext
     {
-        public Settings Settings = new Settings();
+        public Settings Settings { get; set; }
 
         public SettingsContext()
         {
@@ -29,7 +29,7 @@ namespace NotificationPlan.Data
             }
         }
 
-        private void SetDefaultSettings()
+        public void SetDefaultSettings()
         {
             Settings.NameEmploy = "Прокопенко";
             Settings.DayRemineder = Const.DayReminder;
