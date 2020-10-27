@@ -15,9 +15,9 @@ namespace NotificationPlan.Data
         /// </summary>
         /// <param name="month"></param>
         /// <returns></returns>
-        public static string GetFileName(byte month)
+        public static string GetFileName(byte month, int year)
         {
-            var path = Const.PathToWorkPlan;
+            var path = Const.PathToWorkPlan+"\\"+year.ToString();
             var strMonth = Other.GetMonthToString(month);
             string fileMonth = null;
             if (Directory.Exists(path))
@@ -46,5 +46,7 @@ namespace NotificationPlan.Data
 
             return fileMonth;
         }
+
+
     }
 }

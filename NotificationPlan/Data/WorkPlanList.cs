@@ -15,9 +15,9 @@ namespace NotificationPlan.Data
     {
         private List<WorkPlan> _planList = new List<WorkPlan>();
 
-        public List<WorkPlan> GetPlan(byte month)
+        public List<WorkPlan> GetPlan(byte month, int year)
         {
-            var strFile = FileWork.GetFileName(month);
+            var strFile = FileWork.GetFileName(month, year);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             List<WorkPlan> workPlans = new List<WorkPlan>();
             if (string.IsNullOrEmpty(strFile))
