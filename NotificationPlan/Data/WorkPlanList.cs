@@ -20,6 +20,10 @@ namespace NotificationPlan.Data
             var strFile = FileWork.GetFileName(month);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             List<WorkPlan> workPlans = new List<WorkPlan>();
+            if (string.IsNullOrEmpty(strFile))
+            {
+                return workPlans;
+            }
             int endWorkCount = 0;
             int startWorkCount = 0;
             if (!string.IsNullOrEmpty(strFile))

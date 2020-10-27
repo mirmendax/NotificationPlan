@@ -15,9 +15,11 @@ namespace NotificationPlan
 {
     public partial class Form1 : Form
     {
+        public SettingsContext setContext;
         public Form1()
         {
             InitializeComponent();
+            setContext = new SettingsContext();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -25,8 +27,8 @@ namespace NotificationPlan
             WorkPlanList ww = new WorkPlanList();
             var workPlans = ww.GetPlan(10);
             var itemCalendars = new List<ItemCalendar>();
-            label1.Text = workPlans.Where(empl => (empl.NameEmploy.Contains(Const.NameEmploy))).Count().ToString();
-            itemCalendars = Other.Convert(workPlans.Where(t => t.NameEmploy.Contains(Const.NameEmploy)).ToList());
+            label1.Text = workPlans.Count(empl => (empl.NameEmploy.Contains(Const.NameEmploy))).ToString();
+            itemCalendars = Other.Convert(workPlans.Where(t => t.NameEmploy.Contains(Const.NameEmploy)).Where(t => t.StartTO >= DateTime.Now).ToList());
             foreach (var item in itemCalendars)
             {
                 listBox1.Items.Add(item.StartDateTime + item.Body);

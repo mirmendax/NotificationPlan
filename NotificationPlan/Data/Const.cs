@@ -9,8 +9,10 @@ namespace NotificationPlan.Data
     public static class Const
     {
         public static string PathToWorkPlan = @"C:\Workplan\";
-        public static string NameEmploy = "Коваленко В.В.";
+        public static string NameEmploy = "Адайкин";
         public static string EndFileWorkPlanWord = "Итого";
         public static string StartFileWorkPlanWord = "Наименование";
+        public static int DayReminder = 2;
+        public static string NameFileSettings = "settings.json";
     }
 }

@@ -4,29 +4,45 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace NotificationPlan.Data
 {
     public class FileWork
     {
+        /// <summary>
+        /// Получение имени файла из каталога с планами работ на месяц month
+        /// </summary>
+        /// <param name="month"></param>
+        /// <returns></returns>
         public static string GetFileName(byte month)
         {
             var path = Const.PathToWorkPlan;
             var strMonth = Other.GetMonthToString(month);
             string fileMonth = null;
-            var files = Directory.GetFiles(path);
-            foreach (var file in files)
+            if (Directory.Exists(path))
             {
-                if (file.Contains(strMonth))
+                var files = Directory.GetFiles(path);
+                foreach (var file in files)
                 {
-                    fileMonth = file;
-                    break;
+                    if (file.Contains(strMonth))
+                    {
+                        fileMonth = file;
+                        break;
+                    }
+                }
+                if (string.IsNullOrEmpty(fileMonth))
+                {
+                    OpenFileDialog ofd = new OpenFileDialog();
+                    ofd.InitialDirectory = Const.PathToWorkPlan;
+                    DialogResult dialogResult = ofd.ShowDialog();
+                    if (dialogResult == DialogResult.OK)
+                    {
+                        fileMonth = ofd.FileName;
+                    }
                 }
             }
-            if (string.IsNullOrEmpty(fileMonth))
-            {
-                //
-            }
+            
 
             return fileMonth;
         }

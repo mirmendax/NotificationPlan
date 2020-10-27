@@ -11,10 +11,12 @@ namespace NotificationPlan.Data
 {
     public class Other
     {
-        public static void Test()
-        {
-            
-        }
+        /// <summary>
+        /// Получение строкового представления месяца (надо переделать)
+        /// </summary>
+        /// <param name="month"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception">Если число 1<month>12 </exception>
         public static string GetMonthToString(byte month)
         {
             string result = "";
@@ -37,7 +39,10 @@ namespace NotificationPlan.Data
             }
             return result;
         }
-
+        /// <summary>
+        /// Добавление Событий в календарь
+        /// </summary>
+        /// <param name="listItem">список событий</param>
         public static void AddItemCalendar(List<ItemCalendar> listItem)
         {
             Application Application = null;
@@ -61,20 +66,29 @@ namespace NotificationPlan.Data
             }
             Application.ActiveExplorer().CurrentFolder.Display();
         }
-
-        public static int DayOfWeek(DateTime startDate)
+        /// <summary>
+        /// Получение кол-во рабочих дней для получения уведомления
+        /// </summary>
+        /// <param name="startDate">Дата события</param>
+        /// <returns></returns>
+        public static int DayOfWeek(DateTime startDate, int dayReminder)
         {
-            if (startDate.AddDays(-1).DayOfWeek == System.DayOfWeek.Saturday || 
-                startDate.AddDays(-1).DayOfWeek== System.DayOfWeek.Sunday)
+            switch (startDate.AddDays(-dayReminder).DayOfWeek)
             {
-                return 3;
-            }
-            else
-            {
-                return 1;
+                case System.DayOfWeek.Saturday:
+                    return dayReminder + 1;
+                case System.DayOfWeek.Sunday:
+                    return dayReminder + 2;
+                default:
+                    return dayReminder;
             }
         }
-        public static List<ItemCalendar> Convert(List<WorkPlan> wPlan)
+        /// <summary>
+        /// Конвертирование из плана в элемент события календаря с группировкой по дате
+        /// </summary>
+        /// <param name="wPlan"></param>
+        /// <returns></returns>
+        public static List<ItemCalendar> ConvertAndGroup(List<WorkPlan> wPlan)
         {
             var result = new List<ItemCalendar>();
 
@@ -85,11 +99,28 @@ namespace NotificationPlan.Data
                 foreach (var item in itemGroup)
                 {
                     temp.Title = "Работа";
-                    temp.Body += item.Title + " " +item.ViewTO + ";\n ";
+                    temp.Body += item.Title + " " +item.ViewTO + ";\n";
                     temp.StartDateTime = item.StartTO.AddHours(8).AddMinutes(2).AddSeconds(17);
                     temp.EndDateTime = item.EndTO.AddHours(8).AddMinutes(3).AddSeconds(17);
-                    temp.ReminderDay = DayOfWeek(item.StartTO);
+                    temp.ReminderDay = DayOfWeek(item.StartTO, Const.DayReminder);
                 }
+                result.Add(temp);
+            }
+
+            return result;
+        }
+
+        public static List<ItemCalendar> Convert(List<WorkPlan> wPlan)
+        {
+            var result = new List<ItemCalendar>();
+            foreach (var item in wPlan)
+            {
+                var temp = new ItemCalendar();
+                temp.Title = item.Title;
+                temp.Body = item.Title + " " + item.ViewTO;
+                temp.StartDateTime = item.StartTO.AddHours(8).AddMinutes(2).AddSeconds(17);
+                temp.EndDateTime = item.EndTO.AddHours(8).AddMinutes(3).AddSeconds(17);
+                temp.ReminderDay = DayOfWeek(item.StartTO, Const.DayReminder);
                 result.Add(temp);
             }
 
