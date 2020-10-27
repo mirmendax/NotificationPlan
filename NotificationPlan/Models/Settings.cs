@@ -1,4 +1,6 @@
-﻿namespace NotificationPlan.Models
+﻿using System;
+
+namespace NotificationPlan.Models
 {
     public class Settings
     {
@@ -9,5 +11,6 @@
         public string StartFileWorkPlanWord { get; set; }
         public string EndFileWorkPlanWord { get; set; }
         public int DayRemineder { get; set; }
+        public DateSync LastSync { get; set; }
     }
 }

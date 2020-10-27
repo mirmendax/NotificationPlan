@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationPlan", "NotificationPlan\NotificationPlan.csproj", "{D4DB8C67-90F2-4744-BC73-92A56C70F89E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LauncherNP", "LauncherNP\LauncherNP.csproj", "{9E7D50C0-7447-4B40-B96B-06560A8F5D90}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D4DB8C67-90F2-4744-BC73-92A56C70F89E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4DB8C67-90F2-4744-BC73-92A56C70F89E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4DB8C67-90F2-4744-BC73-92A56C70F89E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E7D50C0-7447-4B40-B96B-06560A8F5D90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E7D50C0-7447-4B40-B96B-06560A8F5D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E7D50C0-7447-4B40-B96B-06560A8F5D90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E7D50C0-7447-4B40-B96B-06560A8F5D90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

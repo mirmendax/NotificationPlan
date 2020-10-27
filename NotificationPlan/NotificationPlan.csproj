@@ -72,6 +72,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Const.cs" />
+    <Compile Include="Data\Converter.cs" />
+    <Compile Include="Data\Extensions.cs" />
     <Compile Include="Data\FileWork.cs" />
     <Compile Include="Data\Other.cs" />
     <Compile Include="Data\SettingsContext.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\DateSync.cs" />
     <Compile Include="Models\ItemCalendar.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\WorkPlan.cs" />

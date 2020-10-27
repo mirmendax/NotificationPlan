@@ -36,8 +36,9 @@ namespace NotificationPlan.Data
             Settings.PathToWorkPlan = Const.PathToWorkPlan;
             Settings.StartFileWorkPlanWord = Const.StartFileWorkPlanWord;
             Settings.EndFileWorkPlanWord = Const.EndFileWorkPlanWord;
-            Settings.MonthAddedInCalendar = DateTime.Now.Month;
-            Settings.YearAddedInCalendar = DateTime.Now.Year;
+            Settings.MonthAddedInCalendar = 1;
+            Settings.YearAddedInCalendar = 1;
+            Settings.LastSync = Converter.ConvertToDateSync(DateTime.Now);
             SaveSettings();
         }
 

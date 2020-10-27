@@ -18,17 +18,14 @@ namespace NotificationPlan
         public SettingsContext setContext;
         public bool IsOpen = true;
         private bool IsClose = false;
+        private bool IsWorkSync = false;
 
         private void SetPositionForm()
         {
             this.StartPosition = FormStartPosition.Manual;
-            //Верхний левый угол экрана
             Point pt = Screen.PrimaryScreen.WorkingArea.Location;
-            //Перенос в нижний правый угол экрана без панели задач
             pt.Offset(Screen.PrimaryScreen.WorkingArea.Width, Screen.PrimaryScreen.WorkingArea.Height);
-            //Перенос в местоположение верхнего левого угла формы, чтобы её правый нижний угол попал в правый нижний угол экрана
             pt.Offset(-this.Width, -this.Height);
-            //Новое положение формы
             this.Location = pt;
         }
 
@@ -41,28 +38,90 @@ namespace NotificationPlan
 
         private void button1_Click(object sender, EventArgs e)
         {
-            WorkPlanList ww = new WorkPlanList();
-            var workPlans = ww.GetPlan(10);
-            var itemCalendars = new List<ItemCalendar>();
             
-            itemCalendars = Other.Convert(
-                workPlans.Where(t => t.NameEmploy.Contains(setContext.Settings.NameEmploy))
-                .Where(t => t.EndTO >= DateTime.Now).ToList()
-                );
-            label1.Text = itemCalendars.Count.ToString();
-
-            Other.AddItemCalendar(itemCalendars);
-
         }
 
-        
+        private void CheckNextMonthFileWorkPlan()
+        {
+            IsWorkSync = true;
+            if (DateTime.Now.Day >= 25)
+            {
+                // Проверка на следующий год
+                var NextMonth = DateTime.Now.AddMonths(1);
+                if (NextMonth.Month == 1)
+                {
+                    if (setContext.Settings.YearAddedInCalendar < NextMonth.Year)
+                    {
+                        if (FileWork.GetFileName(NextMonth.Month, NextMonth.Year) != null)
+                        {
+                            var itemCalendars = GetListItemCalendarsOfEmploy(NextMonth);
+                            if (itemCalendars != null)
+                            {
+                                setContext.Settings.YearAddedInCalendar = NextMonth.Year;
+                                setContext.Settings.MonthAddedInCalendar = NextMonth.Month;
+                                setContext.SaveSettings();
+                            }
+                        }
+                        
+                        //Other.AddItemCalendar(itemCalendars);
+                    }
+                }//Конец проверки на следующий год
+                else
+                {
+                    if (setContext.Settings.MonthAddedInCalendar < NextMonth.Month)
+                    {
+                        if (FileWork.GetFileName(NextMonth.Month, NextMonth.Year) != null)
+                        {
+                            var itemCalendars = GetListItemCalendarsOfEmploy(NextMonth);
+                            if (itemCalendars != null)
+                            {
+                                setContext.Settings.MonthAddedInCalendar = NextMonth.Month;
+                                setContext.SaveSettings();
+                            }
+                            
+                            //Other.AddItemCalendar(itemCalendars);
+                        }                        
+                    }
+                }
+            }
+
+            setContext.Settings.LastSync = Converter.ConvertToDateSync(DateTime.Now);
+            setContext.SaveSettings();
+            IsWorkSync = false;
+        }
+
+
+        private List<ItemCalendar> GetListItemCalendarsOfEmploy(DateTime nextMonth)
+        {
+            if (FileWork.GetFileName(nextMonth.Month,
+                nextMonth.Year) == null) return null;
+
+            var workPlans = WorkPlanList.GetPlan(nextMonth.Month,
+                nextMonth.Year);
+
+
+            var itemCalendars = Converter.Convert(
+                workPlans.Where(t => t.NameEmploy.Contains(setContext.Settings.NameEmploy))
+                    .Where(t => t.EndTO >= DateTime.Now).ToList()
+            );
+            lAddedItem.Text = itemCalendars.Count.ToString();
+            return itemCalendars;
+        }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            OnRewrite();
+            timer1.Enabled = true;
+        }
+
+        private void OnRewrite()
+        {
             tbName.Text = setContext.Settings.NameEmploy;
             nudReminder.Value = setContext.Settings.DayRemineder;
-            
-
+            lLastSync.Text = "Последнее обновление: " + setContext.Settings.LastSync
+                                                      + "\nЗагружен план работ на "
+                                                      + Other.GetMonthToString(setContext.Settings
+                                                          .MonthAddedInCalendar);
         }
 
         private void bSave_Click(object sender, EventArgs e)
@@ -94,17 +153,30 @@ namespace NotificationPlan
             {
                 this.Hide();
                 e.Cancel = true;
+                return;
+            }
+            if (IsClose && !IsWorkSync)
+            {
+                e.Cancel = false;
+                return;
             }
             else
             {
-                e.Cancel = false;
-                
+                e.Cancel = true;
+                MessageBox.Show("Идет синхронизация. Дождитесь окончания, затем попробуйте снова.");
+                return;
             }
         }
+        
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            //timer1.Enabled = false;
+            CheckNextMonthFileWorkPlan();
+            OnRewrite();
+            //timer1.Enabled = true;
+        }
 
-
-
-        private void закрытьToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
             IsClose = true;
             this.Close();

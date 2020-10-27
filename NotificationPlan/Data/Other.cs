@@ -17,7 +17,7 @@ namespace NotificationPlan.Data
         /// <param name="month"></param>
         /// <returns></returns>
         /// <exception cref="Exception">Если число 1<month>12 </exception>
-        public static string GetMonthToString(byte month)
+        public static string GetMonthToString(int month)
         {
             string result = "";
             switch (month)
@@ -88,43 +88,6 @@ namespace NotificationPlan.Data
         /// </summary>
         /// <param name="wPlan"></param>
         /// <returns></returns>
-        public static List<ItemCalendar> ConvertAndGroup(List<WorkPlan> wPlan)
-        {
-            var result = new List<ItemCalendar>();
 
-            var groupList = wPlan.GroupBy(startDate => startDate.StartTO);
-            foreach (var itemGroup in groupList)
-            {
-                var temp = new ItemCalendar();
-                foreach (var item in itemGroup)
-                {
-                    temp.Title = "Работа";
-                    temp.Body += item.Title + " " +item.ViewTO + ";\n";
-                    temp.StartDateTime = item.StartTO.AddHours(8).AddMinutes(2).AddSeconds(17);
-                    temp.EndDateTime = item.EndTO.AddHours(8).AddMinutes(3).AddSeconds(17);
-                    temp.ReminderDay = DayOfWeek(item.StartTO, Const.DayReminder);
-                }
-                result.Add(temp);
-            }
-
-            return result;
-        }
-
-        public static List<ItemCalendar> Convert(List<WorkPlan> wPlan)
-        {
-            var result = new List<ItemCalendar>();
-            foreach (var item in wPlan)
-            {
-                var temp = new ItemCalendar();
-                temp.Title = item.Title;
-                temp.Body = item.Title + " " + item.ViewTO;
-                temp.StartDateTime = item.StartTO.AddHours(8).AddMinutes(2).AddSeconds(17);
-                temp.EndDateTime = item.EndTO.AddHours(8).AddMinutes(3).AddSeconds(17);
-                temp.ReminderDay = DayOfWeek(item.StartTO, Const.DayReminder);
-                result.Add(temp);
-            }
-
-            return result;
-        }
     }
 }

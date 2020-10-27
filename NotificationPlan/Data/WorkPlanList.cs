@@ -13,64 +13,66 @@ namespace NotificationPlan.Data
 {
     public class WorkPlanList
     {
-        private List<WorkPlan> _planList = new List<WorkPlan>();
+        
 
-        public List<WorkPlan> GetPlan(byte month, int year)
+        public static List<WorkPlan> GetPlan(int month, int year)
         {
             var strFile = FileWork.GetFileName(month, year);
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            List<WorkPlan> workPlans = new List<WorkPlan>();
-            if (string.IsNullOrEmpty(strFile))
+            var workPlans = new List<WorkPlan>();
+            if (string.IsNullOrEmpty(strFile)) return workPlans;
+            using (var excel = new ExcelPackage(new FileInfo(strFile)))
             {
-                return workPlans;
-            }
-            int endWorkCount = 0;
-            int startWorkCount = 0;
-            if (!string.IsNullOrEmpty(strFile))
-            {
-                using (var excel = new ExcelPackage(new FileInfo(strFile)))
-                {
-                    var sheet = excel.Workbook.Worksheets["ТАиВ"];
-                    if (sheet != null)
-                    {
-                        for (int i = 1; i < sheet.Cells.Count(); i++)
-                        {
-                            var value = (sheet.Cells[$"B{i}"].Value as string);
-                            if (value == null) continue;
-                            
-                            if (value.Contains(Const.StartFileWorkPlanWord)) 
-                                startWorkCount = i + 1;
-                            
-                            if (value.Contains(Const.EndFileWorkPlanWord) || value == "")
-                            {
-                                endWorkCount = i;
-                                break;
-                            }
-                        }
+                var sheet = excel.Workbook.Worksheets["ТАиВ"];
+                if (sheet == null) return workPlans;
+                var endWorkCount = 0;
+                var startWorkCount = 0;
+                (startWorkCount, endWorkCount) = StartWorkCount(sheet);
 
-                        for (int i = startWorkCount; i < endWorkCount; i++)
-                        {
-                            var workPlan = new WorkPlan();
-                            workPlan.Title = sheet.Cells[i, 2].Value as string;
-                            workPlan.ViewTO = sheet.Cells[i, 3].Value as string;
-                            workPlan.NameEmploy = sheet.Cells[i, 11].Value as string;
+                for (var i = startWorkCount; i < endWorkCount; i++)
+                {
+                    var workPlan = new WorkPlan();
+                    workPlan.Title = sheet.Cells[i, 2].Value as string;
+                    workPlan.ViewTO = sheet.Cells[i, 3].Value as string;
+                    workPlan.NameEmploy = sheet.Cells[i, 11].Value as string;
                             
-                            try
-                            {
-                                workPlan.StartTO = DateTime.Parse(sheet.Cells[i, 4].Value.ToString());
-                                workPlan.EndTO = DateTime.Parse(sheet.Cells[i, 5].Value.ToString());
-                            }
-                            catch (Exception e)
-                            {
-                                continue;
-                            }
-                            workPlans.Add(workPlan);
-                        }
+                    try
+                    {
+                        workPlan.StartTO = DateTime.Parse(sheet.Cells[i, 4].Value.ToString());
+                        workPlan.EndTO = DateTime.Parse(sheet.Cells[i, 5].Value.ToString());
                     }
+                    catch (Exception e)
+                    {
+                        continue;
+                    }
+                    workPlans.Add(workPlan);
                 }
             }
 
             return workPlans;
+        }
+
+        private static (int startWorkCount, int endWorkCount) StartWorkCount(ExcelWorksheet sheet)
+        {
+            int startWorkCount = 0;
+            int endWorkCount = 0;
+            var setContext = new SettingsContext();
+            for (int i = 1; i < sheet.Cells.Count(); i++)
+            {
+                var value = (sheet.Cells[i, 2].Value as string);
+                if (value == null) continue;
+
+                if (value.Contains(setContext.Settings.StartFileWorkPlanWord))
+                    startWorkCount = i + 1;
+
+                if (value.Contains(setContext.Settings.EndFileWorkPlanWord) || value == "")
+                {
+                    endWorkCount = i;
+                    break;
+                }
+            }
+
+            return (startWorkCount, endWorkCount);
         }
     }
 }

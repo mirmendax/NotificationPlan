@@ -14,10 +14,13 @@ namespace NotificationPlan.Data
         /// Получение имени файла из каталога с планами работ на месяц month
         /// </summary>
         /// <param name="month"></param>
+        /// <param name="year"></param>
         /// <returns></returns>
-        public static string GetFileName(byte month, int year)
+        public static string GetFileName(int month, int year)
         {
-            var path = Const.PathToWorkPlan+"\\"+year.ToString();
+            var setContext = new SettingsContext();
+            
+            var path = setContext.Settings.PathToWorkPlan+"\\"+year.ToString();
             var strMonth = Other.GetMonthToString(month);
             string fileMonth = null;
             if (Directory.Exists(path))
@@ -33,20 +36,19 @@ namespace NotificationPlan.Data
                 }
                 if (string.IsNullOrEmpty(fileMonth))
                 {
-                    OpenFileDialog ofd = new OpenFileDialog();
-                    ofd.InitialDirectory = Const.PathToWorkPlan;
-                    DialogResult dialogResult = ofd.ShowDialog();
-                    if (dialogResult == DialogResult.OK)
-                    {
-                        fileMonth = ofd.FileName;
-                    }
+                    //OpenFileDialog ofd = new OpenFileDialog();
+                    //ofd.InitialDirectory = Const.PathToWorkPlan;
+                    //DialogResult dialogResult = ofd.ShowDialog();
+                    //if (dialogResult == DialogResult.OK)
+                    //{
+                    //    fileMonth = ofd.FileName;
+                    //}
                 }
             }
             
-
             return fileMonth;
         }
 
-
+        
     }
 }
