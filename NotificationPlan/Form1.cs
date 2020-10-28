@@ -16,8 +16,15 @@ namespace NotificationPlan
     public partial class Form1 : Form
     {
         public SettingsContext setContext;
+        /// <summary>
+        /// Сворачивание окна
+        /// </summary>
         public bool IsOpen = true;
+        
         private bool IsClose = false;
+        /// <summary>
+        /// Выполняется синхронизация
+        /// </summary>
         private bool IsWorkSync = false;
 
         private void SetPositionForm()

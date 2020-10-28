@@ -12,6 +12,7 @@ namespace NotificationPlan.Data
 
         public SettingsContext()
         {
+            Settings = new Settings();
             LoadSettings();
         }
 
@@ -21,17 +22,17 @@ namespace NotificationPlan.Data
             {
                 var fJson = File.ReadAllText(Const.NameFileSettings);
                 Settings = JsonConvert.DeserializeObject<Settings>(fJson);
-                
             }
             else
             {
                 SetDefaultSettings();
+                SaveSettings();
             }
         }
 
         public void SetDefaultSettings()
         {
-            Settings.NameEmploy = "Прокопенко";
+            Settings.NameEmploy = Environment.UserName.Split(new []{' '})[0];
             Settings.DayRemineder = Const.DayReminder;
             Settings.PathToWorkPlan = Const.PathToWorkPlan;
             Settings.StartFileWorkPlanWord = Const.StartFileWorkPlanWord;
