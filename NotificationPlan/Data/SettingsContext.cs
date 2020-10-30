@@ -40,6 +40,8 @@ namespace NotificationPlan.Data
             Settings.MonthAddedInCalendar = 1;
             Settings.YearAddedInCalendar = 1;
             Settings.LastSync = Converter.ConvertToDateSync(DateTime.Now);
+            Settings.IsFirstOpen = true;
+            Settings.NameCalendar = Const.NameCalendar;
             SaveSettings();
         }
 

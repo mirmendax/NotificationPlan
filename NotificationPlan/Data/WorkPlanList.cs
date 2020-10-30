@@ -28,20 +28,39 @@ namespace NotificationPlan.Data
                 var endWorkCount = 0;
                 var startWorkCount = 0;
                 (startWorkCount, endWorkCount) = StartWorkCount(sheet);
+                var endDayMonth = new DateTime(year, month + 1, 1).AddDays(-1).Day;
 
                 for (var i = startWorkCount; i < endWorkCount; i++)
                 {
                     var workPlan = new WorkPlan();
-                    workPlan.Title = sheet.Cells[i, 2].Value as string;
-                    workPlan.ViewTO = sheet.Cells[i, 3].Value as string;
-                    workPlan.NameEmploy = sheet.Cells[i, 11].Value as string;
+                    workPlan.Title = (sheet.Cells[i, 2].Value as string) == null
+                        ? ""
+                        : (sheet.Cells[i, 2].Value as string);
+                    
+                    workPlan.ViewTO = (sheet.Cells[i, 3].Value as string) == null
+                        ? ""
+                        : (sheet.Cells[i, 3].Value as string);
+
+                    workPlan.NameEmploy = (sheet.Cells[i, 11].Value as string) == null
+                        ? ""
+                        : (sheet.Cells[i, 11].Value as string);
                             
                     try
                     {
-                        workPlan.StartTO = DateTime.Parse(sheet.Cells[i, 4].Value.ToString());
-                        workPlan.EndTO = DateTime.Parse(sheet.Cells[i, 5].Value.ToString());
+                        var dStart = (sheet.Cells[i, 4].Value.ToString()) == null
+                            ? new DateTime(year, month, 1).ToString("d")
+                            : sheet.Cells[i, 4].Value.ToString();
+                        
+                        
+                        workPlan.StartTO = DateTime.Parse(dStart);
+                        
+                        var dEnd = (sheet.Cells[i, 5].Value.ToString()) == null
+                            ? new DateTime(year, month, endDayMonth).ToString("d")
+                            : sheet.Cells[i, 5].Value.ToString();
+                        
+                        workPlan.EndTO = DateTime.Parse(dEnd);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         continue;
                     }
@@ -65,7 +84,8 @@ namespace NotificationPlan.Data
                 if (value.Contains(setContext.Settings.StartFileWorkPlanWord))
                     startWorkCount = i + 1;
 
-                if (value.Contains(setContext.Settings.EndFileWorkPlanWord) || value == "")
+                if (value.Contains(setContext.Settings.EndFileWorkPlanWord) || value == "" ||
+                    value.Contains(setContext.Settings.EndFileWorkPlanWord.ToUpper()))
                 {
                     endWorkCount = i;
                     break;

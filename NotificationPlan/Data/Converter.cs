@@ -52,10 +52,11 @@ namespace NotificationPlan.Data
             {
                 var temp = new ItemCalendar();
                 temp.Title = item.Title;
+                temp.IsReminded = !string.IsNullOrEmpty(item.ViewTO);
                 temp.Body = item.Title + " " + item.ViewTO;
-                temp.StartDateTime = item.StartTO.AddHours(8).AddMinutes(2).AddSeconds(17);
-                temp.EndDateTime = item.EndTO.AddHours(8).AddMinutes(3).AddSeconds(17);
-                temp.ReminderDay = Other.DayOfWeek(item.StartTO, Const.DayReminder);
+                temp.StartDateTime = item.StartTO.AddHours(8);
+                temp.EndDateTime = item.EndTO.AddHours(15);
+                temp.ReminderDay = Other.DayOfWeek(item.StartTO, new SettingsContext().Settings.DayRemineder);
                 result.Add(temp);
             }
 

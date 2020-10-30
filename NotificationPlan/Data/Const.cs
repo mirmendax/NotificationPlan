@@ -14,5 +14,6 @@ namespace NotificationPlan.Data
         public static string StartFileWorkPlanWord = "Наименование";
         public static int DayReminder = 2;
         public static string NameFileSettings = "settings.json";
+        public static string NameCalendar = "WorkPlan";
     }
 }

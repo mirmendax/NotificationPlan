@@ -12,5 +12,7 @@ namespace NotificationPlan.Models
         public string EndFileWorkPlanWord { get; set; }
         public int DayRemineder { get; set; }
         public DateSync LastSync { get; set; }
+        public bool IsFirstOpen { get; set; }
+        public string NameCalendar { get; set; }
     }
 }

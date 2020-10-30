@@ -5,11 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace NotificationPlan
 {
@@ -45,16 +47,31 @@ namespace NotificationPlan
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
+            if (!Other.IsExecutOutlook())
+            {
+                MessageBox.Show("Outlook не запущен. Для продолжения работы запустите Outlook и повторите попытку");
+                return;
+            }
+            int month = Other.GetMonthToInt(cbMonth.SelectedItem.ToString());
+            var date = new DateTime(DateTime.Now.Year, month, 1);
+            var list = GetListItemCalendarsOfEmploy(date);
+            Other.AddItemCalendar(list);
+            setContext.Settings.MonthAddedInCalendar = date.Month;
+            setContext.Settings.YearAddedInCalendar = date.Year;
+            setContext.SaveSettings();
+            timer2.Start();
         }
-
+        /// <summary>
+        /// Переделать для автоматизации
+        /// </summary>
         private void CheckNextMonthFileWorkPlan()
         {
             IsWorkSync = true;
             if (DateTime.Now.Day >= 25)
             {
-                // Проверка на следующий год
+                
                 var NextMonth = DateTime.Now.AddMonths(1);
+                // Проверка на следующий год
                 if (NextMonth.Month == 1)
                 {
                     if (setContext.Settings.YearAddedInCalendar < NextMonth.Year)
@@ -98,27 +115,31 @@ namespace NotificationPlan
         }
 
 
-        private List<ItemCalendar> GetListItemCalendarsOfEmploy(DateTime nextMonth)
+        private List<ItemCalendar> GetListItemCalendarsOfEmploy(DateTime month)
         {
-            if (FileWork.GetFileName(nextMonth.Month,
-                nextMonth.Year) == null) return null;
+            if (FileWork.GetFileName(month.Month,
+                month.Year) == null) return null;
 
-            var workPlans = WorkPlanList.GetPlan(nextMonth.Month,
-                nextMonth.Year);
+            var workPlans = WorkPlanList.GetPlan(month.Month,
+                month.Year);
 
-
+            //var itemCalendars = Converter.Convert(
+            //    workPlans.Where(t => t.NameEmploy.Contains(setContext.Settings.NameEmploy))
+            //        .Where(t => t.EndTO >= DateTime.Now).ToList()
             var itemCalendars = Converter.Convert(
-                workPlans.Where(t => t.NameEmploy.Contains(setContext.Settings.NameEmploy))
-                    .Where(t => t.EndTO >= DateTime.Now).ToList()
-            );
-            lAddedItem.Text = itemCalendars.Count.ToString();
+            workPlans.Where(t => t.NameEmploy
+            .Contains(setContext.Settings.NameEmploy))
+            .ToList());
+            lAddedItem.Text = "Добавлено " + itemCalendars.Count.ToString();
             return itemCalendars;
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            cbMonth.SelectedIndex = 0;
             OnRewrite();
-            timer1.Enabled = true;
+            //if (!setContext.Settings.IsFirstOpen)
+            //    timer1.Enabled = true;
         }
 
         private void OnRewrite()
@@ -133,9 +154,13 @@ namespace NotificationPlan
 
         private void bSave_Click(object sender, EventArgs e)
         {
+            //timer1.Stop();
             setContext.Settings.NameEmploy = tbName.Text;
             setContext.Settings.DayRemineder = (int)nudReminder.Value;
+            setContext.Settings.IsFirstOpen = false;
             setContext.SaveSettings();
+            //timer1.Start();
+            
         }
 
         private void notifyIcon1_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -156,7 +181,10 @@ namespace NotificationPlan
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!IsClose)
+            e.Cancel = false;
+            return;
+            //Для автоматиации
+            /*if (!IsClose)
             {
                 this.Hide();
                 e.Cancel = true;
@@ -172,13 +200,13 @@ namespace NotificationPlan
                 e.Cancel = true;
                 MessageBox.Show("Идет синхронизация. Дождитесь окончания, затем попробуйте снова.");
                 return;
-            }
+            }*/
         }
         
         private void timer1_Tick(object sender, EventArgs e)
         {
             //timer1.Enabled = false;
-            CheckNextMonthFileWorkPlan();
+            //CheckNextMonthFileWorkPlan();
             OnRewrite();
             //timer1.Enabled = true;
         }
@@ -187,6 +215,17 @@ namespace NotificationPlan
         {
             IsClose = true;
             this.Close();
+        }
+
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            lAddedItem.Text = "";
+            timer2.Stop();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            
         }
     }
 }

@@ -35,8 +35,15 @@ namespace LauncherNP
         private void timer1_Tick(object sender, EventArgs e)
         {
             var prcApp = new Process();
-            prcApp.StartInfo.FileName = sLContext.Settings.ExecFileName;
-            prcApp.Start();
+            try
+            {
+                prcApp.StartInfo.FileName = sLContext.Settings.ExecFileName;
+                prcApp.Start();
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
             Close();
         }
     }
