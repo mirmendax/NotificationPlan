@@ -47,7 +47,7 @@ namespace NotificationPlan
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (!Other.IsExecutOutlook())
+            if (!Other.IsExecuteOutlook())
             {
                 MessageBox.Show("Outlook не запущен. Для продолжения работы запустите Outlook и повторите попытку");
                 return;
@@ -76,7 +76,7 @@ namespace NotificationPlan
                 {
                     if (setContext.Settings.YearAddedInCalendar < NextMonth.Year)
                     {
-                        if (FileWork.GetFileName(NextMonth.Month, NextMonth.Year) != null)
+                        if (Other.GetFileName(NextMonth.Month, NextMonth.Year) != null)
                         {
                             var itemCalendars = GetListItemCalendarsOfEmploy(NextMonth);
                             if (itemCalendars != null)
@@ -94,7 +94,7 @@ namespace NotificationPlan
                 {
                     if (setContext.Settings.MonthAddedInCalendar < NextMonth.Month)
                     {
-                        if (FileWork.GetFileName(NextMonth.Month, NextMonth.Year) != null)
+                        if (Other.GetFileName(NextMonth.Month, NextMonth.Year) != null)
                         {
                             var itemCalendars = GetListItemCalendarsOfEmploy(NextMonth);
                             if (itemCalendars != null)
@@ -117,7 +117,7 @@ namespace NotificationPlan
 
         private List<ItemCalendar> GetListItemCalendarsOfEmploy(DateTime month)
         {
-            if (FileWork.GetFileName(month.Month,
+            if (Other.GetFileName(month.Month,
                 month.Year) == null) return null;
 
             var workPlans = WorkPlanList.GetPlan(month.Month,
@@ -126,10 +126,9 @@ namespace NotificationPlan
             //var itemCalendars = Converter.Convert(
             //    workPlans.Where(t => t.NameEmploy.Contains(setContext.Settings.NameEmploy))
             //        .Where(t => t.EndTO >= DateTime.Now).ToList()
-            var itemCalendars = Converter.Convert(
-            workPlans.Where(t => t.NameEmploy
+            var itemCalendars = workPlans.Where(t => t.NameEmploy
             .Contains(setContext.Settings.NameEmploy))
-            .ToList());
+            .ToList().ConvertToItemCalendar();
             lAddedItem.Text = "Добавлено " + itemCalendars.Count.ToString();
             return itemCalendars;
         }

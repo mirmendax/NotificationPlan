@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +25,7 @@ namespace NotificationPlan.Data
         public static string GetMonthToString(int month)
         {
             string result = "";
-            switch (month)
+            /*switch (month)
             {
                 case 1: result = "Январь"; break;
                 case 2: result = "Февраль"; break;
@@ -37,15 +39,23 @@ namespace NotificationPlan.Data
                 case 10: result = "Октябрь"; break;
                 case 11: result = "Ноябрь"; break;
                 case 12: result = "Декабрь"; break;
-                default: throw new Exception("Нет такого месяца");
+                default: result = string.Empty;
+                    break;
 
-            }
+            }*/
+            if (month < 1 || month > 12) return string.Empty;
+            result = CultureInfo.CurrentCulture.DateTimeFormat.GetMonthName(month);
             return result;
         }
         public static int GetMonthToInt(string strMonth)
         {
+            if (string.IsNullOrEmpty(strMonth)) return 0;
             var result = 0;
-            switch (strMonth)
+            var cultureInfo = new CultureInfo("ru-RU");
+            var date = $"1 {strMonth} 2020";
+            var dateFormat = DateTime.Parse(date, cultureInfo);
+            result = dateFormat.Month;
+            /*switch (strMonth)
             {
                 case "Январь": result = 1;
                     break;
@@ -86,7 +96,7 @@ namespace NotificationPlan.Data
                 default:
                     
                     break;
-            }
+            }*/
             return result;
         }
         /// <summary>
@@ -99,13 +109,7 @@ namespace NotificationPlan.Data
             Application Application = null;
             Application = new Application();
             MAPIFolder primaryCalendar = Application.ActiveExplorer().Session.GetDefaultFolder(OlDefaultFolders.olFolderCalendar);
-            // if (!IsExistsWorkCalendar())
-            // {
-            //     CreateNewCalendar(sContext.Settings.NameCalendar);
-            // }
 
-            var personalCalendar = primaryCalendar.Folders[sContext.Settings.NameCalendar];
-            if (personalCalendar == null) return;
             foreach (var item in listItem)
             {
                 AppointmentItem newEvent = primaryCalendar.Items.Add(OlItemType.olAppointmentItem) as AppointmentItem;
@@ -132,13 +136,14 @@ namespace NotificationPlan.Data
             Application.ActiveExplorer().CurrentFolder.Display();
         }
 
-        public static bool IsExecutOutlook()
+        public static bool IsExecuteOutlook()
         {
             return Process.GetProcessesByName("Outlook").Any();
 
         }
 
-        /*public static bool IsExistsWorkCalendar()
+        #region Not_used
+/*public static bool IsExistsWorkCalendar()
         {
             SettingsContext sContext = new SettingsContext();
             var result = false;
@@ -176,6 +181,10 @@ namespace NotificationPlan.Data
             }
         }
         */
+        
+
+        #endregion
+        
         /// <summary>
         /// Получение кол-во рабочих дней для получения уведомления
         /// </summary>
@@ -193,11 +202,45 @@ namespace NotificationPlan.Data
                     return dayReminder;
             }
         }
+
         /// <summary>
-        /// Конвертирование из плана в элемент события календаря с группировкой по дате
+        /// Получение имени файла из каталога с планами работ на месяц month
         /// </summary>
-        /// <param name="wPlan"></param>
+        /// <param name="month"></param>
+        /// <param name="year"></param>
         /// <returns></returns>
+        public static string GetFileName(int month, int year)
+        {
+            var setContext = new SettingsContext();
+            
+            var path = setContext.Settings.PathToWorkPlan+"\\"+year.ToString();
+            var strMonth = Other.GetMonthToString(month);
+            string fileMonth = null;
+            if (Directory.Exists(path))
+            {
+                var files = Directory.GetFiles(path);
+                foreach (var file in files)
+                {
+                    if (file.Contains(strMonth))
+                    {
+                        fileMonth = file;
+                        break;
+                    }
+                }
+                if (string.IsNullOrEmpty(fileMonth))
+                {
+                    //OpenFileDialog ofd = new OpenFileDialog();
+                    //ofd.InitialDirectory = Const.PathToWorkPlan;
+                    //DialogResult dialogResult = ofd.ShowDialog();
+                    //if (dialogResult == DialogResult.OK)
+                    //{
+                    //    fileMonth = ofd.FileName;
+                    //}
+                }
+            }
+            
+            return fileMonth;
+        }
 
     }
 }

@@ -7,7 +7,7 @@ namespace NotificationPlan.Data
 {
     public class Converter
     {
-                public static List<ItemCalendar> ConvertAndGroup(List<WorkPlan> wPlan)
+        public static List<ItemCalendar> ConvertAndGroup(List<WorkPlan> wPlan)
         {
             var result = new List<ItemCalendar>();
 
@@ -18,11 +18,12 @@ namespace NotificationPlan.Data
                 foreach (var item in itemGroup)
                 {
                     temp.Title = "Работа";
-                    temp.Body += item.Title + " " +item.ViewTO + ";\n";
+                    temp.Body += item.Title + " " + item.ViewTO + ";\n";
                     temp.StartDateTime = item.StartTO.AddHours(8).AddMinutes(2).AddSeconds(17);
                     temp.EndDateTime = item.EndTO.AddHours(8).AddMinutes(3).AddSeconds(17);
                     temp.ReminderDay = Other.DayOfWeek(item.StartTO, Const.DayReminder);
                 }
+
                 result.Add(temp);
             }
 
@@ -44,7 +45,7 @@ namespace NotificationPlan.Data
         {
             return new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, 0);
         }
-        
+
         public static List<ItemCalendar> Convert(List<WorkPlan> wPlan)
         {
             var result = new List<ItemCalendar>();

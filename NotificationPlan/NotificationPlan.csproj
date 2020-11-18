@@ -74,7 +74,6 @@
     <Compile Include="Data\Const.cs" />
     <Compile Include="Data\Converter.cs" />
     <Compile Include="Data\Extensions.cs" />
-    <Compile Include="Data\FileWork.cs" />
     <Compile Include="Data\Other.cs" />
     <Compile Include="Data\SettingsContext.cs" />
     <Compile Include="Data\WorkPlanList.cs" />
