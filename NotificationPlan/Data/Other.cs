@@ -104,8 +104,8 @@ namespace NotificationPlan.Data
             //     CreateNewCalendar(sContext.Settings.NameCalendar);
             // }
 
-            var personalCalendar = primaryCalendar.Folders[sContext.Settings.NameCalendar];
-            if (personalCalendar == null) return;
+            //var personalCalendar = primaryCalendar.Folders[sContext.Settings.NameCalendar];
+            //if (personalCalendar == null) return;
             foreach (var item in listItem)
             {
                 AppointmentItem newEvent = primaryCalendar.Items.Add(OlItemType.olAppointmentItem) as AppointmentItem;

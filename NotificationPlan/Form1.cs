@@ -223,9 +223,6 @@ namespace NotificationPlan
             timer2.Stop();
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            
-        }
+        
     }
 }

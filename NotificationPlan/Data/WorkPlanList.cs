@@ -28,7 +28,7 @@ namespace NotificationPlan.Data
                 var endWorkCount = 0;
                 var startWorkCount = 0;
                 (startWorkCount, endWorkCount) = StartWorkCount(sheet);
-                var endDayMonth = new DateTime(year, month + 1, 1).AddDays(-1).Day;
+                var endDayMonth = new DateTime(year, month, 1).AddMonths(1).AddDays(-1).Day;
 
                 for (var i = startWorkCount; i < endWorkCount; i++)
                 {
